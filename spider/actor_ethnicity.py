@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
+import utils.config as config
 import re
 
 ethnicity_dict = {}
@@ -10,9 +11,9 @@ all_actor = set()
 
 def get_ethnicity():
     base_url = 'http://search.nndb.com/search/nndb.cgi?nndb=1&omenu=unspecified&query='
-    df = pd.read_csv('./webdatamining/movie_omdb.csv', header=0)
+    df = pd.read_csv(config.path_movie_omdb, header=0)
     actors_in_mov = df['Actors']
-    for x in actors_in_mov:
+    for x in actors_in_mov[:2]:
         actors = str(x).strip().split(',')
         for actor in actors:
             all_actor.add(actor)
@@ -67,7 +68,8 @@ def save():
     for actor in all_actor:
         all_data.append([actor, ethnicity_dict[actor], orientation_dict[actor]])
     ed = pd.DataFrame(all_data, columns=['actorName', 'Ethnicity', 'Orientation'])
-    ed.to_csv('./webdatamining/actor_ethnicity_and_orientation.csv')
+    ed.to_csv(config.path_movie_ethnicity)
 
 
-get_ethnicity()
+if __name__ == '__main__':
+    get_ethnicity()
